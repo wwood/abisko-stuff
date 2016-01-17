@@ -6,8 +6,9 @@ source('~/git/abisko-stuff/abisko.R')
 ```
 
 Then there is functions to e.g. add metadata
-```R
+```
 $ R
+> source('~/git/abisko-stuff/abisko.R')
 > d = data.frame(sample=c('20120700_E1M','20110600_P1D'))
 > d
         sample

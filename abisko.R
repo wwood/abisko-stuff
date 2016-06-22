@@ -57,3 +57,22 @@ add_ftms_metadata = function(df){
  return(df)
 }
 
+# worker function for split_taxonomy
+get_taxonomy_field = function(df, column){
+  return(factor(gsub("^\\s+|\\s+$", "", as.character(cbind(lapply(strsplit(paste(df$taxonomy, ';',';',';',';',';',';',';',';'), ';'), '[[', column))))))
+}
+
+# Split up a semi-colon separated taxonomy field
+split_taxonomy = function(df, has_root=T){
+  start_index = 1
+  if (has_root){start_index = start_index+1}
+  df$domain = get_taxonomy_field(df, start_index)
+  df$phylum = get_taxonomy_field(df, start_index+1)
+  df$class_name = get_taxonomy_field(df, start_index+2)
+  df$order_name = get_taxonomy_field(df, start_index+3)
+  df$family = get_taxonomy_field(df, start_index+4)
+  df$genus = get_taxonomy_field(df, start_index+5)
+  df$species = get_taxonomy_field(df, start_index+6)
+  return(df)
+}
+

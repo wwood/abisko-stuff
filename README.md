@@ -22,3 +22,22 @@ $ R
 2 20110600_S1S    S 2011    1    06 201106_S1     S   S_surface
 3 20110600_S1M    S 2011    1    06 201106_S1     M S_anaerobic
 ```
+
+And split taxonomy strings
+```
+$ R
+> source('~/git/abisko-stuff/abisko.R')
+> d = data.frame(taxonomy='Root;d__bacteria;p_phylum;came;over;for;great;spagbog')
+> d2 = split_taxonomy(d)
+> str(d2)
+'data.frame':	1 obs. of  8 variables:
+ $ taxonomy  : Factor w/ 1 level "Root;d__bacteria;p_phylum;came;over;for;great;spagbog": 1
+ $ domain    : Factor w/ 1 level "d__bacteria": 1
+ $ phylum    : Factor w/ 1 level "p_phylum": 1
+ $ class_name: Factor w/ 1 level "came": 1
+ $ order_name: Factor w/ 1 level "over": 1
+ $ family    : Factor w/ 1 level "for": 1
+ $ genus     : Factor w/ 1 level "great": 1
+ $ species   : Factor w/ 1 level "spagbog": 1
+```
+If there is no `Root`, then use `split_taxonomy(d, has_root=F)`.

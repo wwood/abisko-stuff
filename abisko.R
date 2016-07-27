@@ -20,7 +20,9 @@ add_core_name_metadata = function(df, sample_col_name='sample',using00=TRUE){
   df$core = factor(gsub(x=sample_names, '^......_.(.).*', '\\1', perl=T), levels=c('1','2','3'))
   df$month = factor(gsub(x=sample_names, '^....(..)_.*', '\\1', perl=T), levels=month_levels)
  }
- df$month = factor(df$month, levels=unique(df$month))
+ unique_months = unique(df$month)
+ new_month_levels = month_levels[month_levels %in% unique_months]
+ df$month = factor(df$month, levels=new_month_levels)
 
  df$core_name = paste(df$year, df$month, '_', df$site, df$core, sep='')
  return(df)

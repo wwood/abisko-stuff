@@ -4,12 +4,16 @@
 # 
 # sample_col_name: the name of the column that is the sample name
 # using00: Use true if the names are like "20120800_E1M", otherwise "201208_E1M" is expected. Actually the depth is not required.
+# from_core_name: Derive info from the 'core_name' rather than 'sample'
 #
-add_core_name_metadata = function(df, sample_col_name='sample',using00=TRUE){
+add_core_name_metadata = function(df, sample_col_name='sample',using00=TRUE,from_core_name=FALSE){
  month_levels = c('05','06','07','08','09','10')
  year_levels = c('2010','2011','2012')
+ if (from_core_name & sample_col_name=='sample'){
+  sample_col_name = 'core_name'
+ }
  sample_names = as.data.frame(df)[,sample_col_name]
- if (using00){
+ if (using00 & !from_core_name){
   df$site = factor(gsub(x=sample_names,  '^......00_(.).*', '\\1', perl=T), levels=c('P','S','E'))
   df$year = factor(gsub(x=sample_names,  '^(....)..00_.*', '\\1', perl=T), levels=year_levels)
   df$core = factor(gsub(x=sample_names, '^......00_.(.).*', '\\1', perl=T), levels=c('1','2','3'))
@@ -20,7 +24,9 @@ add_core_name_metadata = function(df, sample_col_name='sample',using00=TRUE){
   df$core = factor(gsub(x=sample_names, '^......_.(.).*', '\\1', perl=T), levels=c('1','2','3'))
   df$month = factor(gsub(x=sample_names, '^....(..)_.*', '\\1', perl=T), levels=month_levels)
  }
- df$month = factor(df$month, levels=unique(df$month))
+ if (!from_core_name){
+  df$month = factor(df$month, levels=unique(df$month))
+ }
 
  df$core_name = paste(df$year, df$month, '_', df$site, df$core, sep='')
  return(df)

@@ -48,7 +48,12 @@ add_metadata = function(df, sample_col_name='sample',using00=TRUE){
  df$site_ssplit[df$site == 'S' & df$depth == 'S'] = 'S_surface'
  df$site_ssplit[df$site == 'S' & df$depth != 'S'] = 'S_anaerobic'
  df$site_ssplit = factor(df$site_ssplit, levels=c('P','S_surface','S_anaerobic','E'))
- 
+ df$site_full = 'other'
+ df$site_full[df$site == 'P'] = 'palsa'
+ df$site_full[df$site == 'S'] = 'bog'
+ df$site_full[df$site == 'E'] = 'fen'
+ df$site_full = factor(df$site_full, levels=c('palsa','bog','fen'))
+
  return(df)
 }
 
@@ -84,4 +89,6 @@ split_taxonomy = function(df, has_root=T, taxonomy_field='taxonomy'){
   df$species = get_taxonomy_field(df, start_index+6, taxonomy_field)
   return(df)
 }
+
+abisko_site_colours = c('#7d4f33','#1e8c19','#191cff')
 

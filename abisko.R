@@ -90,5 +90,5 @@ split_taxonomy = function(df, has_root=T, taxonomy_field='taxonomy'){
   return(df)
 }
 
-abisko_site_colours = c('#7d4f33','#1e8c19','#191cff')
+abisko_site_colours = c('#703C1B','#058000','#0001FF')
 

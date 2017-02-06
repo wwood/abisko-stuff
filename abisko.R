@@ -48,13 +48,31 @@ add_metadata = function(df, sample_col_name='sample',using00=TRUE){
  df$site_ssplit[df$site == 'S' & df$depth == 'S'] = 'S_surface'
  df$site_ssplit[df$site == 'S' & df$depth != 'S'] = 'S_anaerobic'
  df$site_ssplit = factor(df$site_ssplit, levels=c('P','S_surface','S_anaerobic','E'))
- df$site_full = 'other'
- df$site_full[df$site == 'P'] = 'palsa'
- df$site_full[df$site == 'S'] = 'bog'
- df$site_full[df$site == 'E'] = 'fen'
- df$site_full = factor(df$site_full, levels=c('palsa','bog','fen'))
 
  return(df)
+}
+
+# Add metadata, but make the names of certain columns less abbreviated, for figures.
+add_metadata_full = function(df, sample_col_name='sample',using00=TRUE){
+  d2 = add_metadata(df, sample_col_name, using00)
+
+  d2$site_code = d2$site
+  d2$site = as.character(d2$site)
+  d2$site[d2$site_code=='P'] = 'palsa'
+  d2$site[d2$site_code=='S'] = 'bog'
+  d2$site[d2$site_code=='E'] = 'fen'
+  d2$site = factor(d2$site, levels=c('palsa','bog','fen'))
+
+  d2$depth_code = d2$depth
+  d2$depth = as.character(d2$depth)
+  d2$depth = 'other'
+  d2$depth[d2$depth_code=='S'] = 'surface'
+  d2$depth[d2$depth_code=='M'] = 'mid'
+  d2$depth[d2$depth_code=='D'] = 'deep'
+  d2$depth[d2$depth_code=='X'] = 'extra deep'
+  d2$depth = factor(d2$depth, levels=c('surface','mid','deep','extra deep','other'))
+
+  return(d2)
 }
 
 # Given a data frame/table with metadata, remove the may 2012 long permafrost cores and return.

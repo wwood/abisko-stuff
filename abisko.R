@@ -75,6 +75,18 @@ add_metadata_full = function(df, sample_col_name='sample',using00=TRUE){
   return(d2)
 }
 
+add_core_name_metadata_full = function(df, sample_col_name='sample',using00=TRUE){
+  d2 = add_core_name_metadata(df, sample_col_name, using00)
+  d2$site_code = d2$site
+  d2$site = as.character(d2$site)
+  d2$site[d2$site_code=='P'] = 'palsa'
+  d2$site[d2$site_code=='S'] = 'bog'
+  d2$site[d2$site_code=='E'] = 'fen'
+  d2$site = factor(d2$site, levels=c('palsa','bog','fen'))
+
+  return(d2)
+}
+
 # Given a data frame/table with metadata, remove the may 2012 long permafrost cores and return.
 remove_may2012_samples = function(df){
  dff = df[df$year != '2012' | df$month != '05',]

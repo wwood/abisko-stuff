@@ -1,4 +1,6 @@
-# Abisko-related code
+**This code is specific for the [IsoGenie](https://isogenie.osu.edu/) project, and unlikely to be of more general use.**
+
+### Abisko-related R code
 
 To use in R, source it, something like so:
 ```

@@ -1,6 +1,5 @@
 library(data.table)
 library(ggplot2)
-library(reshape2)
 theme_set(theme_bw())
 source("~/git/abisko-stuff/abisko.R")
 
@@ -41,7 +40,7 @@ ab = function(abundance) {
 
 
 read_community_profile = function() {
-    d = fread('/srv/projects/abisko/aterrible_bins/18_a86_a62_promethion1_1529/20190424_epb1_flat_redo_vs_aterrible18_bins.fna.gz.coverm.csv')
+    d = fread('/work2/microbiome/abisko//aterrible_bins/18_a86_a62_promethion1_1529/20190424_epb1_flat_redo_vs_aterrible18_bins.fna.gz.coverm.csv',sep='\t')
     d2 = melt(d, id.vars=c('Genome')) # Complains about not all columns being the same - one is an int. Meh, annoying to see though.
     d2[, sample := gsub('.1.fq.gz .*','',gsub('.*/','',variable))]
     d2[, measure := gsub('.*.1.fq.gz ','',variable)]
@@ -102,7 +101,7 @@ read_community_profile = function() {
 }
 
 read_aterrible15_community_profile = function() {
-    d = fread('bash -c \'cat <(head -1 /srv/projects/abisko/aterrible_bins/15_epb1_assembly86_assembly62/coverm_20190301_epb_flat.csv) <(tail -n+3 /srv/projects/abisko/aterrible_bins/15_epb1_assembly86_assembly62/coverm_20190301_epb_flat.csv)\'', header=T)
+    d = fread('bash -c \'cat <(head -1 /work2/microbiome/abisko//aterrible_bins/15_epb1_assembly86_assembly62/coverm_20190301_epb_flat.csv) <(tail -n+3 /work2/microbiome/abisko//aterrible_bins/15_epb1_assembly86_assembly62/coverm_20190301_epb_flat.csv)\'', header=T)
     setnames(d, 'Relative Abundance (%)', 'relative_abundance')
     d[, sample := gsub('.1.fq.gz$','',Sample)]
     d[, Sample := NULL]
@@ -116,7 +115,7 @@ read_aterrible15_community_profile = function() {
 }
 
 read_dereplicated_memberships = function () {
-    d = fread('/srv/projects/abisko/aterrible_bins/18_a86_a62_promethion1_1529/clustering/dereplicated_memberships.csv')
+    d = fread('/work2/microbiome/abisko//aterrible_bins/18_a86_a62_promethion1_1529/clustering/dereplicated_memberships.csv')
     setnames(d, 'genome', 'genome_path')
 
     d[source=='old', genome := paste(sep='', 'old_',gsub('.fna$','',gsub('.*/','',genome_path)))]
@@ -128,25 +127,25 @@ read_dereplicated_memberships = function () {
 }
 
 read_coverm_strangeness_csvs = function() {
-    files = c('/srv/projects/abisko/aterrible_bins/18_a86_a62_promethion1_1529/coverage_strangeness_investigation/alpha6_aterrible15.csv',
-              '/srv/projects/abisko/aterrible_bins/18_a86_a62_promethion1_1529/coverage_strangeness_investigation/alpha4_aterrible15.csv',
-              '/srv/projects/abisko/aterrible_bins/18_a86_a62_promethion1_1529/coverage_strangeness_investigation/alpha4_aterrible18.csv',
-              '/srv/projects/abisko/aterrible_bins/18_a86_a62_promethion1_1529/coverage_strangeness_investigation/alpha6_aterrible18.csv')
+    files = c('/work2/microbiome/abisko//aterrible_bins/18_a86_a62_promethion1_1529/coverage_strangeness_investigation/alpha6_aterrible15.csv',
+              '/work2/microbiome/abisko//aterrible_bins/18_a86_a62_promethion1_1529/coverage_strangeness_investigation/alpha4_aterrible15.csv',
+              '/work2/microbiome/abisko//aterrible_bins/18_a86_a62_promethion1_1529/coverage_strangeness_investigation/alpha4_aterrible18.csv',
+              '/work2/microbiome/abisko//aterrible_bins/18_a86_a62_promethion1_1529/coverage_strangeness_investigation/alpha6_aterrible18.csv')
     d = data.table(file=files)[,fread(file),by=file]
     d[, file := gsub('.*/','',file)]
     return(d)
 }
 
 read_gtdbtk = function() {
-    a = fread('/srv/projects/abisko/aterrible_bins/18_a86_a62_promethion1_1529/gtdbtk4/gtdbtk.ar122.summary.tsv')
-    b = fread('/srv/projects/abisko/aterrible_bins/18_a86_a62_promethion1_1529/gtdbtk4/gtdbtk.bac120.summary.tsv')
+    a = fread('/work2/microbiome/abisko//aterrible_bins/18_a86_a62_promethion1_1529/gtdbtk4/gtdbtk.ar122.summary.tsv')
+    b = fread('/work2/microbiome/abisko//aterrible_bins/18_a86_a62_promethion1_1529/gtdbtk4/gtdbtk.bac120.summary.tsv')
     return(
         rbind(a,b)[,.(genome=user_genome, taxonomy=classification)]
     )
 }
 
 read_idm = function() {
-    d = fread('/srv/projects/abisko/shotgun_abundance/129_epb1_idm/idm_output/KO.matrix.tab',header=T)
+    d = fread('/work2/microbiome/abisko//shotgun_abundance/129_epb1_idm/idm_output/KO.matrix.tab',header=T)
     d2 = melt(d, id.vars='ID', variable.name='sample1', value.name='count')
     d2[, sample := gsub('.1.fq.gz.diamond.txt.gz','',sample1)]
     d2[, sample1 := NULL]
@@ -164,7 +163,7 @@ read_gc = function(dna_measured_days) {
     ## of solution, but we assume all).
     ##
     ## CO2 has not yet been adjusted for pH of the liquid
-    d = fread('cat \'/srv/projects/abisko/data/bioreactors/epb/operation data/Raw data csv/Parent GC.csv\'')
+    d = fread('cat \'/work2/microbiome/abisko//data/bioreactors/epb/operation data/Raw data csv/Parent GC.csv\'')
     m2 = t(d[,2:ncol(d),with=F])
     d2 = data.table(m2)
     setnames(d2, c('day_fraction','CH4_dissolved_produced','CO2_dissolved_produced',
@@ -181,7 +180,7 @@ read_gc = function(dna_measured_days) {
 read_hplc_file = function(file, whitelist_chemicals, is_parent_reactor) {
     #print(file)
     #file = 'Parent HPLC.csv'
-    d = fread(paste('/srv/projects/abisko/data/bioreactors/epb/operation data/Raw data csv/',file,sep=''),skip=1)
+    d = fread(paste('/work2/microbiome/abisko//data/bioreactors/epb/operation data/Raw data csv/',file,sep=''),skip=1)
 
     d2 = d[3:nrow(d)]
     setnames(d2, as.character(c('chemical', t(d[1,2:ncol(d)]))))
@@ -196,7 +195,7 @@ read_hplc_file = function(file, whitelist_chemicals, is_parent_reactor) {
         d3 = d3[,-feed_sample_ids,with=F]
     }
 
-    d4 = data.table(melt(as.data.frame(d3), id.vars='chemical', variable.name='day_fraction', value.name='concentration', variable.factor=F))[!is.na(concentration)]
+    d4 = data.table(melt(d3, id.vars='chemical', variable.name='day_fraction', value.name='concentration', variable.factor=F))[!is.na(concentration)]
     d4[, day_fraction := as.numeric(as.character(day_fraction))]
     if (is_parent_reactor) {
         d4[, day := round(day_fraction+0.5)]
@@ -234,6 +233,7 @@ read_hplc = function(dna_measured_days) {
     ## Check if the days line up
     #data.table(table(d2[day %in% dna_measured_days]$day)) #=> Seems wrong there should be 24 or 12 for each day > 63 - caused by an error in the input spreadsheet - getting Rob to fix.
     warning("The baby hplc data is currently incomplete")
+    warning("The parent hplc data needs checking, an issue analysing before and after feed?")
 
     d2[, sample := paste(sep='', 'r2.',type,'.d',day)]
 
@@ -241,7 +241,7 @@ read_hplc = function(dna_measured_days) {
 }
 
 gather_dna_analysed_days = function() {
-    dna_sample_names = fread('/srv/projects/abisko/aterrible_bins/18_a86_a62_promethion1_1529/samples_with_dna.list',header=F)
+    dna_sample_names = fread('/work2/microbiome/abisko//aterrible_bins/18_a86_a62_promethion1_1529/samples_with_dna.list',header=F)
     dna_sample_names[, day := as.numeric(gsub('.*d','',V1))]
     return(dna_sample_names$day)
 }
@@ -291,13 +291,13 @@ add_taxonomy_to_community_profile = function(community_profile, gtdbtk) {
 
 
 read_enrichm_ko_hmm = function() {
-    d = melt(fread('/srv/projects/abisko/aterrible_bins/18_a86_a62_promethion1_1529/enrichm/enrichm_out_ko_hypothetical_cazy/ko_frequency_table.tsv'), id.vars='ID', variable.name='genome', value.name='ko_count')[ko_count > 0]
+    d = melt(fread('/work2/microbiome/abisko//aterrible_bins/18_a86_a62_promethion1_1529/enrichm/enrichm_out_ko_hypothetical_cazy/ko_frequency_table.tsv'), id.vars='ID', variable.name='genome', value.name='ko_count')[ko_count > 0]
     setnames(d, 'ID', 'ko')
     return(d)
 }
 
 read_dna_extractions = function(types_factor_levels, community_profile) {
-    d = fread('/srv/projects/abisko/data/bioreactors/epb/operation\ data/Extractions_Jamie-DNA.csv')[,1:11,with=F]
+    d = fread('/work2/microbiome/abisko//data/bioreactors/epb/operation\ data/Extractions_Jamie-DNA.csv')[,1:11,with=F]
     ##d[Date %in% c('180903','181015')] #=> Not sure what these are - asking Rob.
     setnames(d, c('Day1','Month','Date','day','Type','Source','sample_order','Sample','extraction_order','dna_extraction_set','dna_yield'))
     d2 = d[,.(day,Type,sample_order,extraction_order,dna_extraction_set,dna_yield,rob_name=paste(Type,Date))]
@@ -321,7 +321,7 @@ read_dna_extractions = function(types_factor_levels, community_profile) {
 
 
 read_rna_extractions = function(types_factor_levels) {
-    d = fread('/srv/projects/abisko/data/bioreactors/epb/operation\ data/Extractions_Jamie-RNA.csv')#[,1:11,with=F]
+    d = fread('/work2/microbiome/abisko//data/bioreactors/epb/operation\ data/Extractions_Jamie-RNA.csv')#[,1:11,with=F]
     setnames(d, c('Day1','Month','Date','day','CycleDay','Type','Source','sample_order',
                   'Unknown','Sample','Priority','Extracted','rna_yield','rin','rna_extraction_order',
                   'rna_extraction_notes'))

@@ -122,3 +122,9 @@ split_taxonomy = function(df, has_root=T, taxonomy_field='taxonomy'){
 
 abisko_site_colours = c('#703C1B','#058000','#0001FF')
 
+read_fasta_to_data_table <- function(fasta_path) {
+  dt = fread(cmd = paste('cat',fasta_path,' |awk \'{print $1}\' |awk \'/^>/ {printf("%s%s\t",(N>0?"\\n":""),$0);N++;next;} {printf("%s",$0);} END {printf("\\n");}\' |sed "s/>//"'), header=F, sep='\t')
+  setnames(dt, c('id','sequence'))
+  return(dt)
+}
+

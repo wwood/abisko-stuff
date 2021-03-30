@@ -40,15 +40,16 @@ ab = function(abundance) {
 
 
 read_community_profile = function() {
-    d = fread('/work2/microbiome/abisko//aterrible_bins/18_a86_a62_promethion1_1529/20190424_epb1_flat_redo_vs_aterrible18_bins.fna.gz.coverm.csv',sep='\t')
+    #d = fread('/work2/microbiome/abisko//aterrible_bins/18_a86_a62_promethion1_1529/20190424_epb1_flat_redo_vs_aterrible18_bins.fna.gz.coverm.csv',sep='\t')
+    d = fread('/work/microbiome/abisko/tmp_BEN_VIRG/r2.All_46_SAMPLES/data/coverm_abundances.tsv',sep='\t')
     d2 = melt(d, id.vars=c('Genome')) # Complains about not all columns being the same - one is an int. Meh, annoying to see though.
     d2[, sample := gsub('.1.fq.gz .*','',gsub('.*/','',variable))]
     d2[, measure := gsub('.*.1.fq.gz ','',variable)]
     d2[, variable := NULL]
     d3 = dcast.data.table(d2, Genome+sample~measure, value.var='value')
-    setnames(d3, c('Mean','Trimmed Mean'), c('mean_coverage','trimmed_mean'))
+#    setnames(d3, c('Mean','Trimmed Mean'), c('mean_coverage','trimmed_mean'))
     setnames(d3, 'Relative Abundance (%)', 'relabund')
-    setnames(d3, 'Covered Bases', 'covered_bases')
+ #   setnames(d3, 'Covered Bases', 'covered_bases')
     setnames(d3, 'Genome','genome')
 
     ## a3 - incorporate duplicates so starting material for each is facetted, and mean_abundance
